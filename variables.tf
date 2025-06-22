@@ -13,7 +13,7 @@ variable "ecr_repository_name" {
 variable "jenkins_instance_type" {
   description = "The EC2 instance type for the Jenkins server."
   type        = string
-  default     = "t2.micro"
+  default     = "t2.medium"
 }
 
 variable "tools_instance_type" {
