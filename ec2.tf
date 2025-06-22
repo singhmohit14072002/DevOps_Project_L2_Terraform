@@ -186,7 +186,7 @@ resource "aws_instance" "tools_instance" {
 resource "aws_instance" "monitoring_instance" {
   ami                    = data.aws_ami.amazon_linux_2.id
   instance_type          = var.monitoring_instance_type
-  subnet_id              = aws_subnet.public[0].id # Assuming at least one public subnet, adjust index if needed
+  subnet_id              = aws_subnet.public[1].id # Using the second public subnet
   vpc_security_group_ids = [aws_security_group.monitoring_sg.id]
   key_name               = "devops_jenkins"
 
