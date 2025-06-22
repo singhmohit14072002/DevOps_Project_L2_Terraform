@@ -16,6 +16,46 @@ resource "aws_eks_cluster" "main" {
   ]
 }
 
+resource "aws_security_group_rule" "jenkins_to_eks" {
+  description              = "Allow Jenkins to connect to the EKS API server"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  source_security_group_id = aws_security_group.jenkins_sg.id
+}
+
+// Data source to find the security group associated with the EKS node group
+data "aws_security_groups" "eks_node_group_sgs" {
+  tags = {
+    "eks:cluster-name"   = var.cluster_name
+    "eks:nodegroup-name" = "${var.cluster_name}-node-group"
+  }
+}
+
+// Security group rule for node-exporter
+resource "aws_security_group_rule" "monitoring_to_node_exporter" {
+  description              = "Allow Monitoring server to scrape node-exporter"
+  type                     = "ingress"
+  from_port                = 31000
+  to_port                  = 31000
+  protocol                 = "tcp"
+  security_group_id        = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  source_security_group_id = aws_security_group.monitoring_sg.id
+}
+
+// Security group rule for kube-state-metrics
+resource "aws_security_group_rule" "monitoring_to_kube_state_metrics" {
+  description              = "Allow Monitoring server to scrape kube-state-metrics"
+  type                     = "ingress"
+  from_port                = 32000
+  to_port                  = 32000
+  protocol                 = "tcp"
+  security_group_id        = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  source_security_group_id = aws_security_group.monitoring_sg.id
+}
+
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.cluster_name}-node-group"

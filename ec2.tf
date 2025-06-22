@@ -134,6 +134,10 @@ resource "aws_instance" "jenkins_instance" {
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
   key_name               = "devops_jenkins"
 
+  root_block_device {
+    volume_size = 16 # Increased from 8GB to 16GB
+  }
+
   user_data = <<-EOF
               #!/bin/bash
               sudo yum update -y

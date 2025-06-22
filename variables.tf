@@ -19,7 +19,7 @@ variable "jenkins_instance_type" {
 variable "tools_instance_type" {
   description = "The EC2 instance type for the Tools server (SonarQube, Trivy)."
   type        = string
-  default     = "t3.medium"
+  default     = "t3.large"
 }
 
 variable "monitoring_instance_type" {
